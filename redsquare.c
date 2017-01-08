@@ -1,3 +1,4 @@
+// Made by Bastiaan van der Plaat (http://bastiaan.plaatsoft.nl)
 #include <windows.h>
 #define W 800
 #define H 600
