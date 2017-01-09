@@ -1,6 +1,6 @@
 // Made by Bastiaan van der Plaat (http://bastiaan.plaatsoft.nl)
 #include <windows.h>
-int w = 640, h = 480, e = 32, i, score, time, level, gameover, dragging;
+int w = 640, h = 480, e = 32, i, score, time, level, gameover, dragging; char str[42];
 typedef struct { int x, y, w, h, dx, dy; } Block; Block a, b[4];
 void startGame(HWND hwnd) {
   score = time = 0, level = 1, gameover = dragging = FALSE, a = (Block){w/2-e, h/2-e, e*2, e*2},
@@ -39,17 +39,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
       BeginPaint(hwnd, &ps);
       SelectObject(ps.hdc, CreateFont(20, 0, 0, 0, 400, 0, 0, 0, 0, 0, 0, 0, 0, "Arial"));
       Rectangle(ps.hdc, 50, 50, w - 50, h - 50);
-      
-      LPCTSTR str[43];
-      sprintf(&str, "Score: %07d  -  Time: %03ds  -  Level: %02d", score, time / 40, level);
-      TextOut(ps.hdc, 50, 5, (LPCTSTR)&str, 43);
+      sprintf(str, "Score: %06d  -  Time: %03ds  -  Level: %02d", score, time / 40, level);
+      TextOut(ps.hdc, 50, 5, (LPCTSTR)&str, 42);
       TextOut(ps.hdc, 50, 25, "Help: move the red block avoid the white edge and the blue blocks", 65);
       TextOut(ps.hdc, 50, 445, "Made by Bastiaan van der Plaat (http://bastiaan.plaatsoft.nl)", 61);
-      
       SelectObject(ps.hdc, CreateSolidBrush(RGB(255, 0, 0)));
       Rectangle(ps.hdc, a.x, a.y, a.x + a.w, a.y + a.h);
       if (a.x < 50 || a.x + a.w > w - 50 || a.y < 50 || a.y + a.h > h - 50) gameover = TRUE;
-      
       SelectObject(ps.hdc, CreateSolidBrush(RGB(0, 0, 255)));
       for (i = 0; i < 4; i++) {
         Rectangle(ps.hdc, b[i].x, b[i].y, b[i].x + b[i].w, b[i].y + b[i].h);
