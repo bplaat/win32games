@@ -14,8 +14,7 @@ void startGame(HWND hwnd) {
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
   switch (msg) {
     case WM_CREATE:
-      startGame(hwnd);
-      RECT r1, r2; GetWindowRect(hwnd, &r1); GetClientRect(hwnd, &r2);
+      startGame(hwnd); RECT r1, r2; GetWindowRect(hwnd, &r1); GetClientRect(hwnd, &r2);
       SetWindowPos(hwnd, NULL, 0, 0, r1.right - r1.left - r2.right + W, r1.bottom - r1.top - r2.bottom + H, SWP_NOMOVE);
     break;
     case WM_TIMER:
