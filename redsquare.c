@@ -27,7 +27,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
           if (b[i].dx > 0) { b[i].dx += 2; } else { b[i].dx -= 2; }
           if (b[i].dy > 0) { b[i].dy += 2; } else { b[i].dy -= 2; }
         }
-        RedrawWindow(hwnd, NULL, NULL, RDW_INVALIDATE | RDW_INTERNALPAINT);
+        InvalidateRect(hwnd, NULL, TRUE);
       }
     break;
     case WM_LBUTTONDOWN: { int x = LOWORD(lParam), y = HIWORD(lParam);
@@ -37,12 +37,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     case WM_MOUSEMOVE: if (dragging) a.x = LOWORD(lParam) - a.dx, a.y = HIWORD(lParam) - a.dy; break;
     case WM_PAINT:
       BeginPaint(hwnd, &ps);
-      SetBkColor(ps.hdc, RGB(255, 255, 0));
       SelectObject(ps.hdc, CreateFont(20, 0, 0, 0, 400, 0, 0, 0, 0, 0, 0, 0, 0, "Arial"));
-      
-      SelectObject(ps.hdc, CreateSolidBrush(RGB(255, 255, 0)));
-      Rectangle(ps.hdc, 0, 0, w, h);
-      SelectObject(ps.hdc, CreateSolidBrush(RGB(255, 255, 255)));
       Rectangle(ps.hdc, 50, 50, w - 50, h - 50);
       
       LPCTSTR str[43];
@@ -73,10 +68,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
   WNDCLASS wc = {0}; wc.lpszClassName = "RedSquare", wc.lpfnWndProc = WndProc, wc.hInstance = hInstance,
-  wc.hCursor = LoadCursor(NULL, IDC_ARROW); RegisterClass(&wc);
-  HWND hwnd = CreateWindow(wc.lpszClassName, wc.lpszClassName, WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME ^
-  WS_MAXIMIZEBOX, CW_USEDEFAULT, CW_USEDEFAULT, w, h, NULL, NULL, hInstance, NULL);
-  ShowWindow(hwnd, nCmdShow);
+  wc.hCursor = LoadCursor(NULL, IDC_ARROW), wc.hbrBackground = CreateSolidBrush(RGB(255, 255, 255)); RegisterClass(&wc);
+  HWND hwnd = CreateWindow(wc.lpszClassName, wc.lpszClassName, WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME ^ WS_MAXIMIZEBOX,
+  CW_USEDEFAULT, CW_USEDEFAULT, w, h, NULL, NULL, hInstance, NULL); ShowWindow(hwnd, nCmdShow);
   MSG msg; while(GetMessage(&msg, NULL, 0, 0)) TranslateMessage(&msg), DispatchMessage(&msg);
   return msg.wParam;
 }
