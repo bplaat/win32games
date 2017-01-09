@@ -60,7 +60,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
       }
       EndPaint(hwnd, &ps);
     break;
-    case WM_CLOSE: DestroyWindow(hwnd); break;
     case WM_DESTROY: PostQuitMessage(0); break;
     default: return DefWindowProc(hwnd, msg, wParam, lParam);
   }
@@ -68,7 +67,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
   WNDCLASS wc = {0}; wc.lpszClassName = "RedSquare", wc.lpfnWndProc = WndProc, wc.hInstance = hInstance,
-  wc.hCursor = LoadCursor(NULL, IDC_ARROW), wc.hbrBackground = CreateSolidBrush(RGB(255, 255, 255)); RegisterClass(&wc);
+  wc.hCursor = LoadCursor(NULL, IDC_ARROW), wc.hbrBackground = CreateSolidBrush(RGB(255, 255, 255)),
+  wc.hIcon = LoadIcon(NULL, MAKEINTRESOURCE(2)); RegisterClass(&wc);
   HWND hwnd = CreateWindow(wc.lpszClassName, wc.lpszClassName, WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME ^ WS_MAXIMIZEBOX,
   CW_USEDEFAULT, CW_USEDEFAULT, w, h, NULL, NULL, hInstance, NULL); ShowWindow(hwnd, nCmdShow);
   MSG msg; while(GetMessage(&msg, NULL, 0, 0)) TranslateMessage(&msg), DispatchMessage(&msg);
