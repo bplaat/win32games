@@ -28,9 +28,10 @@ char map[MW][MH], str[32], font[5] = "Arial"; int seed, turn = 1, world_size = 0
 double random () { double x = sin(seed++) * 1e4; return x - floor(x); }
 int rand (min, max) { return floor(random() * (max - min + 1)) + min; }
 
-PointArray n, portals;
+PointArray portals;
+/*PointArray n;
 void neighbors (int x, int y, int p) {
-  n.array[0] = (Point){x, y-1}; n.array[1] = (Point){x, y+1};
+//  n.array[0] = (Point){x, y-1}; n.array[1] = (Point){x, y+1};
   n.array[2] = (Point){x-1, y-(x%2?0:1)}; n.array[3] = (Point){x-1, y+x%2};
   n.array[4] = (Point){x+1, y-(x%2?0:1)}; n.array[5] = (Point){x+1, y+x%2};
   
@@ -47,13 +48,13 @@ void endTurn () {
     players[i].units.array[j].x = x, players[i].units.array[j].y = y, map[x][y] = i + 3;
   }
   turn++;
-}
+}*/
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
   PAINTSTRUCT ps; int i, j, k, x, y;
   switch (msg) {
     case WM_CREATE:
-      seed = getpid(); initPointArray(&n, 6); initPointArray(&portals, 5);
+      seed = getpid(); /*initPointArray(&n, 6);*/ initPointArray(&portals, 5);
       for (i = 0; i < MW; i++) for (j = 0; j < MH-i%2; j++) map[i][j] = 0;
       
       RECT r1, r2; GetWindowRect(hwnd, &r1); GetClientRect(hwnd, &r2);
@@ -81,9 +82,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
           map[x][y] = i + 3; addUnitArray(&players[i].units, (Unit){0, x, y});
         }
       }
-      SetTimer(hwnd, 1, 100, NULL);
+      //SetTimer(hwnd, 1, 100, NULL);
     break;
-    case WM_TIMER: endTurn(), InvalidateRect(hwnd, NULL, TRUE); break;
+   // case WM_TIMER: endTurn(), InvalidateRect(hwnd, NULL, TRUE); break;
     case WM_PAINT:
       BeginPaint(hwnd, &ps);
       SetBkMode(ps.hdc, TRANSPARENT);
