@@ -26,14 +26,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
       } else {
         SelectObject(hdc, background); Rectangle(hdc, 0, 0, w, h); Rectangle(hdc, 50, 50, w - 50, h - 50);
-        sprintf(str, "Score: %06d  -  Time: %02ds  -  Level: %02d", score += level, time++ / 40, level);
-        TextOut(hdc, 50, 5, (LPCTSTR)&str, 41);
-        TextOut(hdc, 50, 25, "Help: move the red block avoid the white edge and the blue blocks", 65);
+        sprintf(str, "Score: %06d  -  Time: %02ds  -  Level: %02d", score += level, time++ / 40, level); TextOut(hdc, 50, 5, (LPCTSTR)&str, 41);
+        TextOut(hdc, 50, 25, "Help: move the red block avoid the edge and the blue blocks", 59);
         TextOut(hdc, 50, 445, "Made by Bastiaan van der Plaat (http://bastiaan.plaatsoft.nl)", 61);
         SelectObject(hdc, red); Rectangle(hdc, a.x, a.y, a.x + a.w, a.y + a.h);
         if (a.x < 50 || a.x + a.w > w - 50 || a.y < 50 || a.y + a.h > h - 50) gameover = TRUE;
-        SelectObject(hdc, blue);
-        for (i = 0; i < 4; i++) {
+        SelectObject(hdc, blue); for (i = 0; i < 4; i++) {
           Rectangle(hdc, b[i].x, b[i].y, b[i].x + b[i].w, b[i].y + b[i].h);
           if (b[i].x + b[i].dx < 0 || b[i].x + b[i].dx > w - b[i].w) b[i].dx = -b[i].dx;
           if (b[i].y + b[i].dy < 0 || b[i].y + b[i].dy > h - b[i].h) b[i].dy = -b[i].dy;
