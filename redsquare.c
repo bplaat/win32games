@@ -1,11 +1,11 @@
 // Made by Bastiaan van der Plaat (http://bastiaan.plaatsoft.nl)
 #include <windows.h>
 HDC hdc; HBRUSH background, red, blue; char str[41];
-int w = 640, h = 480, e = 32, i, score, time, level, gameover, dragging;
+int w = 640, h = 480, e = 32, i, x, y, score, time, level, gameover, drag;
 typedef struct { int x, y, w, h, dx, dy; } Block; Block a, b[4];
 void startGame(HWND hwnd) {
   background = CreateSolidBrush(RGB(rand() % 100 + 155, rand() % 100 + 155, rand() % 100 + 155)),
-  score = time = 0, level = 1, gameover = dragging = FALSE, a = (Block){w/2-e, h/2-e, e*2, e*2},
+  score = time = 0, level = 1, gameover = drag = FALSE, a = (Block){w/2-e, h/2-e, e*2, e*2},
   b[0] = (Block){0, 0, e*4, e*2, 4, 4}, b[1] = (Block){w-e*3, 0, e*3, e*3, -4, 4},
   b[2] = (Block){0, h-e*4, e*2, e*4, 4, -4}, b[3] = (Block){w-e*4, h-e*3, e*4, e*3, -4, -4};
   SetTimer(hwnd, 1, 25, NULL);
@@ -15,8 +15,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     case WM_CREATE:
       srand(getpid()); hdc = GetDC(hwnd), red = CreateSolidBrush(RGB(255, 0, 0)), blue = CreateSolidBrush(RGB(0, 0, 255));
       SelectObject(hdc, CreateFont(20, 0, 0, 0, FW_NORMAL, 0, 0, 0, 0, 0, 0, 0, 0, "Arial")); SetBkMode(hdc, TRANSPARENT);
-      startGame(hwnd); RECT r; GetClientRect(hwnd, &r); int nw = w * 2 - r.right - r.left, nh = h * 2 - r.bottom  - r.top;
-      SetWindowPos(hwnd, NULL, (GetSystemMetrics(SM_CXSCREEN) - nw) / 2, (GetSystemMetrics(SM_CYSCREEN) - nh) / 2, nw, nh, 0);
+      startGame(hwnd); RECT r; GetClientRect(hwnd, &r); x = w * 2 - r.right - r.left, y = h * 2 - r.bottom  - r.top;
+      SetWindowPos(hwnd, NULL, (GetSystemMetrics(SM_CXSCREEN) - x) / 2, (GetSystemMetrics(SM_CYSCREEN) - y) / 2, x, y, 0);
     break;
     case WM_TIMER:
       if (gameover) {
@@ -44,11 +44,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
       }
     break;
-    case WM_LBUTTONDOWN: { int x = LOWORD(lParam), y = HIWORD(lParam);
-      if (x >= a.x && x <= a.x + a.w && y >= a.y && y <= a.y + a.h ) a.dx = x - a.x, a.dy = y - a.y, dragging = TRUE;
-    } break;
-    case WM_LBUTTONUP: dragging = FALSE; break;
-    case WM_MOUSEMOVE: if (dragging) a.x = LOWORD(lParam) - a.dx, a.y = HIWORD(lParam) - a.dy; break;
+    case WM_LBUTTONDOWN: x = LOWORD(lParam), y = HIWORD(lParam);
+      if (x >= a.x && x <= a.x + a.w && y >= a.y && y <= a.y + a.h ) a.dx = x - a.x, a.dy = y - a.y, drag = TRUE;
+    break;
+    case WM_LBUTTONUP: drag = FALSE; break;
+    case WM_MOUSEMOVE: if (drag) a.x = LOWORD(lParam) - a.dx, a.y = HIWORD(lParam) - a.dy; break;
     case WM_DESTROY: PostQuitMessage(0); return 0;
   }
   return DefWindowProc(hwnd, msg, wParam, lParam);
