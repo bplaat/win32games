@@ -16,7 +16,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
       srand(getpid()); hdc = GetDC(hwnd), red = CreateSolidBrush(RGB(255, 0, 0)), blue = CreateSolidBrush(RGB(0, 0, 255));
       SelectObject(hdc, CreateFont(20, 0, 0, 0, FW_NORMAL, 0, 0, 0, 0, 0, 0, 0, 0, "Arial")); SetBkMode(hdc, TRANSPARENT);
       startGame(hwnd); RECT r; GetClientRect(hwnd, &r); int nw = w * 2 - r.right - r.left, nh = h * 2 - r.bottom  - r.top;
-      SetWindowPos(hwnd, NULL, (GetSystemMetrics(SM_CXSCREEN) - nw) / 2, (GetSystemMetrics(SM_CYSCREEN) - nh) / 2, nw, nh, SWP_SHOWWINDOW);
+      SetWindowPos(hwnd, NULL, (GetSystemMetrics(SM_CXSCREEN) - nw) / 2, (GetSystemMetrics(SM_CYSCREEN) - nh) / 2, nw, nh, 0);
     break;
     case WM_TIMER:
       if (gameover) {
