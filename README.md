@@ -2,4 +2,4 @@
 My C Win32 Games
 
 ## Build
-Compiled with tcc 32 bit with no other arguments
+Compiled with tcc 32 bit without other arguments
