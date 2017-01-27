@@ -1,10 +1,9 @@
 // Made by Bastiaan van der Plaat (http://bastiaan.plaatsoft.nl)
 #include <windows.h>
-HDC hdc; HBRUSH background, red, blue; char str[41];
+HDC hdc; HBRUSH white, red, blue; char str[41];
 int w = 640, h = 480, e = 32, i, x, y, score, time, level, gameover, drag;
 typedef struct { int x, y, w, h, dx, dy; } Block; Block a, b[4];
 void startGame(HWND hwnd) {
-  background = CreateSolidBrush(RGB(rand() % 100 + 155, rand() % 100 + 155, rand() % 100 + 155)),
   score = time = 0, level = 1, gameover = drag = FALSE, a = (Block){w/2-e, h/2-e, e*2, e*2},
   b[0] = (Block){0, 0, e*4, e*2, 4, 4}, b[1] = (Block){w-e*3, 0, e*3, e*3, -4, 4},
   b[2] = (Block){0, h-e*4, e*2, e*4, 4, -4}, b[3] = (Block){w-e*4, h-e*3, e*4, e*3, -4, -4};
@@ -13,10 +12,10 @@ void startGame(HWND hwnd) {
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
   switch (msg) {
     case WM_CREATE:
-      srand(getpid()); hdc = GetDC(hwnd), red = CreateSolidBrush(RGB(255, 0, 0)), blue = CreateSolidBrush(RGB(0, 0, 255));
+      hdc = GetDC(hwnd), white = CreateSolidBrush(RGB(255, 255, 255)), red = CreateSolidBrush(RGB(255, 0, 0)), blue = CreateSolidBrush(RGB(0, 0, 255));
       SelectObject(hdc, CreateFont(20, 0, 0, 0, FW_NORMAL, 0, 0, 0, 0, 0, 0, 0, 0, "Arial")); SetBkMode(hdc, TRANSPARENT);
       startGame(hwnd); RECT r; GetClientRect(hwnd, &r); x = w * 2 - r.right - r.left, y = h * 2 - r.bottom  - r.top;
-      SetWindowPos(hwnd, NULL, (GetSystemMetrics(SM_CXSCREEN) - x) / 2, (GetSystemMetrics(SM_CYSCREEN) - y) / 2, x, y, 0);
+      SetWindowPos(hwnd, NULL, (GetSystemMetrics(SM_CXSCREEN) - x) / 2, (GetSystemMetrics(SM_CYSCREEN) - y) / 2, x, y, SWP_SHOWWINDOW);
     break;
     case WM_TIMER:
       if (gameover) {
@@ -25,7 +24,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
           case IDRETRY: startGame(hwnd); break; case IDCANCEL: DestroyWindow(hwnd);
         }
       } else {
-        SelectObject(hdc, background); Rectangle(hdc, 0, 0, w, h); Rectangle(hdc, 50, 50, w - 50, h - 50);
+        SelectObject(hdc, white); Rectangle(hdc, -1, -1, w + 2, h + 2); Rectangle(hdc, 50, 50, w - 50, h - 50);
         sprintf(str, "Score: %06d  -  Time: %02ds  -  Level: %02d", score += level, time++ / 40, level); TextOut(hdc, 50, 5, (LPCTSTR)&str, 41);
         TextOut(hdc, 50, 25, "Help: move the red block avoid the edge and the blue blocks", 59);
         TextOut(hdc, 50, 445, "Made by Bastiaan van der Plaat (http://bastiaan.plaatsoft.nl)", 61);
@@ -55,6 +54,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
   WNDCLASS wc = {0}; wc.lpszClassName = "RedSquare", wc.lpfnWndProc = WndProc, wc.hInstance = hInstance, wc.hCursor = LoadCursor(NULL, IDC_ARROW); RegisterClass(&wc);
-  CreateWindow(wc.lpszClassName, wc.lpszClassName, WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME ^ WS_MAXIMIZEBOX | WS_VISIBLE, 0, 0, w, h, NULL, NULL, hInstance, NULL);
+  CreateWindow(wc.lpszClassName, wc.lpszClassName, WS_OVERLAPPEDWINDOW ^ WS_THICKFRAME ^ WS_MAXIMIZEBOX, 0, 0, w, h, NULL, NULL, hInstance, NULL);
   MSG msg; while(GetMessage(&msg, NULL, 0, 0) > 0) TranslateMessage(&msg), DispatchMessage(&msg); return msg.wParam;
 }
