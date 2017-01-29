@@ -1,6 +1,6 @@
 // Made by Bastiaan van der Plaat (http://bastiaan.plaatsoft.nl)
 #include <windows.h>
-HDC hdc; HBRUSH white, red, blue; char str[41];
+HBRUSH white, red, blue; HFONT font; char str[41];
 int w = 640, h = 480, e = 32, i, x, y, score, time, level, gameover, drag;
 typedef struct { int x, y, w, h, dx, dy; } Block; Block a, b[4];
 void startGame(HWND hwnd) {
@@ -10,10 +10,11 @@ void startGame(HWND hwnd) {
   SetTimer(hwnd, 1, 25, NULL);
 }
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+  PAINTSTRUCT ps;
   switch (msg) {
     case WM_CREATE:
-      hdc = GetDC(hwnd), white = CreateSolidBrush(RGB(255, 255, 255)), red = CreateSolidBrush(RGB(255, 0, 0)), blue = CreateSolidBrush(RGB(0, 0, 255));
-      SelectObject(hdc, CreateFont(20, 0, 0, 0, FW_NORMAL, 0, 0, 0, 0, 0, 0, 0, 0, "Arial")); SetBkMode(hdc, TRANSPARENT);
+      white = CreateSolidBrush(RGB(255, 255, 255)), red = CreateSolidBrush(RGB(255, 0, 0)), blue = CreateSolidBrush(RGB(0, 0, 255)),
+      font = CreateFont(20, 0, 0, 0, FW_NORMAL, 0, 0, 0, 0, 0, 0, 0, 0, "Arial");
       startGame(hwnd); RECT r; GetClientRect(hwnd, &r); x = w * 2 - r.right - r.left, y = h * 2 - r.bottom  - r.top;
       SetWindowPos(hwnd, NULL, (GetSystemMetrics(SM_CXSCREEN) - x) / 2, (GetSystemMetrics(SM_CYSCREEN) - y) / 2, x, y, SWP_SHOWWINDOW);
     break;
@@ -24,24 +25,29 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
           case IDRETRY: startGame(hwnd); break; case IDCANCEL: DestroyWindow(hwnd);
         }
       } else {
-        SelectObject(hdc, white); Rectangle(hdc, -1, -1, w + 2, h + 2); Rectangle(hdc, 50, 50, w - 50, h - 50);
-        sprintf(str, "Score: %06d  -  Time: %02ds  -  Level: %02d", score += level, time++ / 40, level); TextOut(hdc, 50, 5, (LPCTSTR)&str, 41);
-        TextOut(hdc, 50, 25, "Help: move the red block avoid the edge and the blue blocks", 59);
-        TextOut(hdc, 50, 445, "Made by Bastiaan van der Plaat (http://bastiaan.plaatsoft.nl)", 61);
-        SelectObject(hdc, red); Rectangle(hdc, a.x, a.y, a.x + a.w, a.y + a.h);
-        if (a.x < 50 || a.x + a.w > w - 50 || a.y < 50 || a.y + a.h > h - 50) gameover = TRUE;
-        SelectObject(hdc, blue); for (i = 0; i < 4; i++) {
-          Rectangle(hdc, b[i].x, b[i].y, b[i].x + b[i].w, b[i].y + b[i].h);
-          if (b[i].x + b[i].dx < 0 || b[i].x + b[i].dx > w - b[i].w) b[i].dx = -b[i].dx;
-          if (b[i].y + b[i].dy < 0 || b[i].y + b[i].dy > h - b[i].h) b[i].dy = -b[i].dy;
-          if (a.x < b[i].x + b[i].w && a.x + a.w > b[i].x && a.y < b[i].y + b[i].h && a.y + a.h > b[i].y) gameover = TRUE;
-          b[i].x += b[i].dx, b[i].y += b[i].dy;
-        }
-        if (time % 400 == 0) for (level++, i = 0; i < 4; i++) {
+        if (++time % 400 == 0) for (level++, i = 0; i < 4; i++) {
           if (b[i].dx > 0) { b[i].dx += 2; } else { b[i].dx -= 2; }
           if (b[i].dy > 0) { b[i].dy += 2; } else { b[i].dy -= 2; }
-        }
+        } InvalidateRect(hwnd, NULL, TRUE);
       }
+    break;
+    case WM_PAINT:
+      BeginPaint(hwnd, &ps); SelectObject(ps.hdc, font); SetBkMode(ps.hdc, TRANSPARENT);
+      SelectObject(ps.hdc, white); Rectangle(ps.hdc, -1, -1, w + 2, h + 2); Rectangle(ps.hdc, 50, 50, w - 50, h - 50);
+      sprintf(str, "Score: %06d  -  Time: %02ds  -  Level: %02d", score += level, time / 40, level); TextOut(ps.hdc, 50, 5, (LPCTSTR)&str, 41);
+      TextOut(ps.hdc, 50, 25, "Help: move the red block avoid the edge and the blue blocks", 59);
+      TextOut(ps.hdc, 50, 445, "Made by Bastiaan van der Plaat (http://bastiaan.plaatsoft.nl)", 61);
+      SelectObject(ps.hdc, red); Rectangle(ps.hdc, a.x, a.y, a.x + a.w, a.y + a.h);
+      if (a.x < 50 || a.x + a.w > w - 50 || a.y < 50 || a.y + a.h > h - 50) gameover = TRUE;
+      SelectObject(ps.hdc, blue);
+      for (i = 0; i < 4; i++) {
+        Rectangle(ps.hdc, b[i].x, b[i].y, b[i].x + b[i].w, b[i].y + b[i].h);
+        if (b[i].x + b[i].dx < 0 || b[i].x + b[i].dx > w - b[i].w) b[i].dx = -b[i].dx;
+        if (b[i].y + b[i].dy < 0 || b[i].y + b[i].dy > h - b[i].h) b[i].dy = -b[i].dy;
+        if (a.x < b[i].x + b[i].w && a.x + a.w > b[i].x && a.y < b[i].y + b[i].h && a.y + a.h > b[i].y) gameover = TRUE;
+        b[i].x += b[i].dx, b[i].y += b[i].dy;
+      }
+      EndPaint(hwnd, &ps);
     break;
     case WM_LBUTTONDOWN: x = LOWORD(lParam), y = HIWORD(lParam);
       if (x >= a.x && x <= a.x + a.w && y >= a.y && y <= a.y + a.h ) a.dx = x - a.x, a.dy = y - a.y, drag = TRUE;
