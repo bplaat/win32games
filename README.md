@@ -8,3 +8,5 @@ My C Win32 Games
 
 ## Build
 Compiled with tcc 32 bit without other arguments
+
+Made by [Bastiaan van der Plaat](http://bastiaan.plaatsoft.nl/)
