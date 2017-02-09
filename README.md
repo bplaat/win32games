@@ -7,4 +7,4 @@ My C Win32 Games
 - A game menu (like the [RedSquare](https://github.com/wplaat/redsquare))
 
 ## Build
-Compiled with tcc 32 bit without other arguments
+Compiled with tcc 32 bit on Windows 10 without other arguments
