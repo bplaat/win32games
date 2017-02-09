@@ -3,10 +3,8 @@ My C Win32 Games
 
 ## Games
 - RedSquare
-- PlaatQuest (only demo)
-- A game menu
+- PlaatQuest (not working yet)
+- A game menu (like the [RedSquare](https://github.com/wplaat/redsquare))
 
 ## Build
 Compiled with tcc 32 bit without other arguments
-
-Made by [Bastiaan van der Plaat](http://bastiaan.plaatsoft.nl/)
