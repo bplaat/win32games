@@ -1,5 +1,5 @@
-# My-C-Win32-Games
-My C Win32 Games
+# win32games
+My Win32 games made in C
 
 ## Games
 - RedSquare
