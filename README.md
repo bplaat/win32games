@@ -1,4 +1,4 @@
-# win32games an amzing project
+# Win32 Games, just some amazing projects
 
 My Win32 games made in C
 
@@ -9,3 +9,5 @@ My Win32 games made in C
 
 ## Build
 Compiled with tcc 32 bit on Windows 10 without other arguments
+
+Or with the MinGW 64 suite if you are feeling fancy
