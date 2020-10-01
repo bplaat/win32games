@@ -1,4 +1,5 @@
-# win32games
+# win32games an amzing project
+
 My Win32 games made in C
 
 ## Games
